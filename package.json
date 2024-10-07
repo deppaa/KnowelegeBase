@@ -9,7 +9,7 @@
     "db:init": "initdb -D ${CLUSTER_NAME:-pg} -E UTF8 --locale=en_US.UTF-8",
     "db:start": "postgres -D ${CLUSTER_NAME:-pg} -p 5300",
     "db:create": "node-pg-migrate create",
-    "db:up": "node-pg-migrate up"
+    "db:up": "node ./migrate.js"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
