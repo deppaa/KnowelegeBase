@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import { routes } from './routes';
 
 export const app = () => {
-  const fastify = Fastify();
+  const fastify = Fastify({ logger: true });
 
   routes(fastify);
 
