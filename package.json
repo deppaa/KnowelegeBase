@@ -1,0 +1,30 @@
+{
+  "name": "knowelege-base",
+  "version": "0.0.1",
+  "description": "Backend",
+  "scripts": {
+    "watch": "tsc-watch --onSuccess \"ts-node ./src/index.ts\"",
+    "migrate": "node-pg-migrate",
+    "lint": "eslint \"**/*.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsc-watch": "^6.2.0",
+    "typescript": "5.4.2"
+  },
+  "dependencies": {
+    "@fastify/passport": "^3.0.1",
+    "@types/pg": "^8.11.10",
+    "fastify": "^5.0.0",
+    "node-pg-migrate": "^7.7.0",
+    "pg": "^8.13.0"
+  },
+  "main": "./src"
+}
