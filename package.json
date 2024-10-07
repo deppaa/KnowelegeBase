@@ -2,10 +2,14 @@
   "name": "knowelege-base",
   "version": "0.0.1",
   "description": "Backend",
+  "private": true,
   "scripts": {
     "watch": "tsc-watch --onSuccess \"ts-node ./src/index.ts\"",
-    "migrate": "node-pg-migrate",
-    "lint": "eslint \"**/*.ts\""
+    "lint": "eslint \"**/*.ts\"",
+    "db:init": "initdb -D ${CLUSTER_NAME:-pg} -E UTF8 --locale=en_US.UTF-8",
+    "db:start": "postgres -D ${CLUSTER_NAME:-pg} -p 5300",
+    "db:create": "node-pg-migrate create",
+    "db:up": "node-pg-migrate up"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
@@ -22,6 +26,7 @@
   "dependencies": {
     "@fastify/passport": "^3.0.1",
     "@types/pg": "^8.11.10",
+    "dotenv-flow": "^4.1.0",
     "fastify": "^5.0.0",
     "node-pg-migrate": "^7.7.0",
     "pg": "^8.13.0"
