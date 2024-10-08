@@ -3,9 +3,16 @@ export type Publication = {
   title: string;
   description: string;
   status: 'public' | 'private';
+  tagids: Tags['id'][];
 };
 
 export type Tags = {
   id: number;
   title: string;
+};
+
+export type PublicationTag = {
+  id: number;
+  publication_id: Publication['id'];
+  tag_id: Tags['id'];
 };

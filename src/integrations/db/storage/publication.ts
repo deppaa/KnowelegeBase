@@ -7,7 +7,22 @@ export const getPublicationById = async (
   id: Publication['id'],
 ): Promise<Publication | undefined> => {
   const { rows } = await db.query<Publication>({
-    text: `SELECT id, ${COLUMNS} FROM publication WHERE id = $1`,
+    text: `
+        SELECT 
+            p.id AS id,
+            p.title AS title,
+            p.description AS description,
+            p.status AS status,
+            ARRAY_AGG(t.id) AS tagids
+        FROM 
+            publication p
+        LEFT JOIN 
+            publication_tag pt ON p.id = pt.publication_id
+        LEFT JOIN 
+            tags t ON pt.tag_id = t.id
+        WHERE p.id = $1
+        GROUP BY 
+            p.id, p.title, p.description, p.status`,
     values: [id],
   });
 
@@ -16,7 +31,21 @@ export const getPublicationById = async (
 
 export const getListPublication = async (): Promise<Publication[]> => {
   const { rows } = await db.query<Publication>({
-    text: `SELECT id, ${COLUMNS} FROM publication`,
+    text: `
+        SELECT 
+            p.id AS id,
+            p.title AS title,
+            p.description AS description,
+            p.status AS status,
+            ARRAY_AGG(t.id) AS tagids
+        FROM 
+            publication p
+        LEFT JOIN 
+            publication_tag pt ON p.id = pt.publication_id
+        LEFT JOIN 
+            tags t ON pt.tag_id = t.id
+        GROUP BY 
+            p.id, p.title, p.description, p.status`,
     values: [],
   });
 
@@ -28,7 +57,7 @@ export const updatePublicationById = async ({
   title,
   description,
   status,
-}: Publication): Promise<Publication> => {
+}: Omit<Publication, 'tagids'>): Promise<Publication> => {
   const { rows } = await db.query<Publication>({
     text: `
         UPDATE publication
@@ -45,7 +74,7 @@ export const createPublication = async ({
   title,
   description,
   status,
-}: Omit<Publication, 'id'>): Promise<Publication> => {
+}: Omit<Publication, 'id' | 'tagids'>): Promise<Publication> => {
   const { rows } = await db.query<Publication>({
     text: `
         INSERT INTO publication (${COLUMNS}) 

@@ -1,29 +1,19 @@
-import { FastifyInstance, HTTPMethods } from 'fastify';
-import * as test from './test';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Routes = Record<string, Partial<Record<HTTPMethods, any>>>;
-
-const router = (routes: Routes) => (fastify: FastifyInstance) =>
-  fastify.register(async (fastify) => {
-    Object.entries(routes).forEach(([url, config]) => {
-      Object.entries(config).forEach(([_method, { handler }]) => {
-        const method = _method as HTTPMethods;
-
-        fastify.route({
-          method,
-          url,
-          handler,
-        });
-      });
-    });
-  });
+import { router } from '../utils/router';
+import * as publication from './publication';
+import * as tags from './tags';
 
 export const routes = router({
-  '/': {
-    GET: test.get,
+  '/publication': {
+    GET: publication.getList,
+    POST: publication.create,
   },
-  '/test': {
-    GET: test.get,
+  '/publication/:id': {
+    GET: publication.get,
+    PUT: publication.update,
+    DELETE: publication.delete,
+  },
+  '/tags': {
+    GET: tags.getList,
+    POST: tags.create,
   },
 });

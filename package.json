@@ -27,7 +27,8 @@
     "@fastify/passport": "^3.0.1",
     "@types/pg": "^8.11.10",
     "dotenv-flow": "^4.1.0",
-    "fastify": "^5.0.0",
+    "fastify": "^4.26.2",
+    "fastify-extract-definitions": "^3.1.0",
     "node-pg-migrate": "^7.7.0",
     "pg": "^8.13.0"
   },
