@@ -13,6 +13,7 @@ const runMigrations = async () => {
     direction: 'up',
     count: Infinity,
   };
+
   try {
     console.log('Run migrations');
     await runner(options);
