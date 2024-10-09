@@ -6,6 +6,10 @@ import {
   deletePublicationById,
   getPublicationById,
 } from '../../integrations/db/storage/publication';
+import {
+  deletePublicationTegById,
+  getListPublicationTegByPublicationId,
+} from '../../integrations/db/storage/publicationTeg';
 
 export const options = config({
   roles: ['user'],
@@ -59,6 +63,12 @@ export const handler: Handler<PublicationIdDelete> = async (request, reply) => {
     return reply
       .code(HTTP_STATUS.NOT_FOUND)
       .send({ error: ERRORS.PUBLICATION_NOT_FOUND });
+  }
+
+  const tags = await getListPublicationTegByPublicationId(Number(id));
+
+  if (tags.length) {
+    await Promise.all([tags.map((tag) => deletePublicationTegById(tag.id))]);
   }
 
   const result = await deletePublicationById(Number(id));
