@@ -101,7 +101,10 @@ export type PublicationIdPutReply =
   | PublicationIdPutReplyStatus400
   | PublicationIdPutReplyStatus404;
 
-export type PublicationIdDeleteReply = PublicationIdDeleteReplyStatus200;
+export type PublicationIdDeleteReply =
+  | PublicationIdDeleteReplyStatus200
+  | PublicationIdDeleteReplyStatus400
+  | PublicationIdDeleteReplyStatus404;
 
 export type RegistrationPostReply =
   | RegistrationPostReplyStatus201
@@ -266,6 +269,14 @@ export interface PublicationIdDeleteParams {
 
 export interface PublicationIdDeleteReplyStatus200 {
   id?: number;
+}
+
+export interface PublicationIdDeleteReplyStatus400 {
+  error?: string;
+}
+
+export interface PublicationIdDeleteReplyStatus404 {
+  error?: string;
 }
 
 export interface RegistrationPost {
