@@ -12,6 +12,8 @@ const runMigrations = async () => {
     dir: migrationDir,
     direction: 'up',
     count: Infinity,
+    checkOrder: true,
+    migrationsTable: 'migrations',
   };
 
   try {

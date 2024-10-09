@@ -1,7 +1,7 @@
 import { db } from '../connection';
 import { PublicationTag } from './types';
 
-const COLUMNS = ['publication_id', 'tag_id'];
+const COLUMNS = ['publication_id', 'tag_id'].join(', ');
 
 export const createPublicationTeg = async ({
   publication_id,

@@ -15,6 +15,7 @@ import {
 } from '../../integrations/db/storage/publicationTeg';
 
 export const options = config({
+  roles: ['user'],
   schema: {
     params: {
       type: 'object',

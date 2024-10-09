@@ -1,6 +1,8 @@
 import { router } from '../utils/router';
 import * as publication from './publication';
 import * as tags from './tags';
+import * as user from './user';
+import * as signIn from './signIn';
 
 export const routes = router({
   '/publication': {
@@ -15,5 +17,15 @@ export const routes = router({
   '/tags': {
     GET: tags.getList,
     POST: tags.create,
+  },
+
+  '/registration': {
+    POST: user.create,
+  },
+  '/user/:id': {
+    DELETE: user.delete,
+  },
+  '/signin': {
+    POST: signIn.login,
   },
 });

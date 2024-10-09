@@ -11,3 +11,6 @@ export const DB_CONNECTION = (() => {
 
   return `postgresql://${user}${DB_HOST}:${DB_PORT}/${DB_NAME}?`;
 })();
+
+export const JWT_SECRET = process.env.JWT_SECRET || '';
+export const PASSWORD_SALT = process.env.PASSWORD_SALT || '';

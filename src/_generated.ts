@@ -73,7 +73,9 @@ export type Handler<
   ContextConfig
 >;
 
-export type PublicationGetReply = PublicationGetReplyStatus200;
+export type PublicationGetReply =
+  | PublicationGetReplyStatus200
+  | PublicationGetReplyStatus401;
 
 export type PublicationGetReplyStatus200 = {
   id?: number;
@@ -91,6 +93,7 @@ export type PublicationPostReply =
 export type PublicationIdGetReply =
   | PublicationIdGetReplyStatus200
   | PublicationIdGetReplyStatus400
+  | PublicationIdGetReplyStatus401
   | PublicationIdGetReplyStatus404;
 
 export type PublicationIdPutReply =
@@ -100,7 +103,17 @@ export type PublicationIdPutReply =
 
 export type PublicationIdDeleteReply = PublicationIdDeleteReplyStatus200;
 
-export type TagsGetReply = TagsGetReplyStatus200;
+export type RegistrationPostReply =
+  | RegistrationPostReplyStatus201
+  | RegistrationPostReplyStatus400
+  | RegistrationPostReplyStatus401;
+
+export type SigninPostReply =
+  | SigninPostReplyStatus200
+  | SigninPostReplyStatus400
+  | SigninPostReplyStatus401;
+
+export type TagsGetReply = TagsGetReplyStatus200 | TagsGetReplyStatus401;
 
 export type TagsGetReplyStatus200 = {
   id?: number;
@@ -108,6 +121,11 @@ export type TagsGetReplyStatus200 = {
 }[];
 
 export type TagsPostReply = TagsPostReplyStatus201;
+
+export type UserIdDeleteReply =
+  | UserIdDeleteReplyStatus200
+  | UserIdDeleteReplyStatus400
+  | UserIdDeleteReplyStatus404;
 
 export interface API {
   '/publication': {
@@ -119,14 +137,32 @@ export interface API {
     PUT: PublicationIdPut;
     DELETE: PublicationIdDelete;
   };
+  '/registration': {
+    POST: RegistrationPost;
+  };
+  '/signin': {
+    POST: SigninPost;
+  };
   '/tags': {
     GET: TagsGet;
     POST: TagsPost;
   };
+  '/user/:id': {
+    DELETE: UserIdDelete;
+  };
 }
 
 export interface PublicationGet {
+  Querystring: PublicationGetQuerystring;
   Reply: PublicationGetReply;
+}
+
+export interface PublicationGetQuerystring {
+  tagIds?: string[];
+}
+
+export interface PublicationGetReplyStatus401 {
+  error?: string;
 }
 
 export interface PublicationPost {
@@ -175,6 +211,10 @@ export interface PublicationIdGetReplyStatus200 {
 }
 
 export interface PublicationIdGetReplyStatus400 {
+  error?: string;
+}
+
+export interface PublicationIdGetReplyStatus401 {
   error?: string;
 }
 
@@ -228,8 +268,56 @@ export interface PublicationIdDeleteReplyStatus200 {
   id?: number;
 }
 
+export interface RegistrationPost {
+  Body: RegistrationPostBody;
+  Reply: RegistrationPostReply;
+}
+
+export interface RegistrationPostBody {
+  login: string;
+  password: string;
+}
+
+export interface RegistrationPostReplyStatus201 {
+  login?: string;
+}
+
+export interface RegistrationPostReplyStatus400 {
+  error?: string;
+}
+
+export interface RegistrationPostReplyStatus401 {
+  error?: string;
+}
+
+export interface SigninPost {
+  Body: SigninPostBody;
+  Reply: SigninPostReply;
+}
+
+export interface SigninPostBody {
+  login: string;
+  password: string;
+}
+
+export interface SigninPostReplyStatus200 {
+  login?: string;
+}
+
+export interface SigninPostReplyStatus400 {
+  error?: string;
+}
+
+export interface SigninPostReplyStatus401 {
+  error?: string;
+}
+
 export interface TagsGet {
   Reply: TagsGetReply;
+}
+
+export interface TagsGetReplyStatus401 {
+  error?: string;
 }
 
 export interface TagsPost {
@@ -244,4 +332,25 @@ export interface TagsPostBody {
 export interface TagsPostReplyStatus201 {
   id?: number;
   title?: string;
+}
+
+export interface UserIdDelete {
+  Params: UserIdDeleteParams;
+  Reply: UserIdDeleteReply;
+}
+
+export interface UserIdDeleteParams {
+  id: string;
+}
+
+export interface UserIdDeleteReplyStatus200 {
+  id?: number;
+}
+
+export interface UserIdDeleteReplyStatus400 {
+  error?: string;
+}
+
+export interface UserIdDeleteReplyStatus404 {
+  error?: string;
 }

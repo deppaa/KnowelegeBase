@@ -1,7 +1,7 @@
 import { db } from '../connection';
-import { Publication } from './types';
+import { Publication, Tags } from './types';
 
-const COLUMNS = ['title', 'description', 'status'];
+const COLUMNS = ['title', 'description', 'status'].join(', ');
 
 export const getPublicationById = async (
   id: Publication['id'],
@@ -29,7 +29,23 @@ export const getPublicationById = async (
   return rows[0];
 };
 
-export const getListPublication = async (): Promise<Publication[]> => {
+export const getListPublication = async (
+  tags?: Tags['id'][],
+  status?: Publication['status'],
+): Promise<Publication[]> => {
+  const search = [];
+
+  if (tags?.length) {
+    search.push(`pt.tag_id IN (${tags.join(', ')})`);
+  }
+
+  if (status) {
+    search.push(`p.status = '${status}'`);
+  }
+
+  const queryCondition =
+    search.length > 0 ? `WHERE ${search.join(' AND ')}` : '';
+
   const { rows } = await db.query<Publication>({
     text: `
         SELECT 
@@ -44,6 +60,7 @@ export const getListPublication = async (): Promise<Publication[]> => {
             publication_tag pt ON p.id = pt.publication_id
         LEFT JOIN 
             tags t ON pt.tag_id = t.id
+        ${queryCondition}
         GROUP BY 
             p.id, p.title, p.description, p.status`,
     values: [],

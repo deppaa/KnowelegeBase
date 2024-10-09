@@ -4,6 +4,7 @@ import { HTTP_STATUS } from '../../constants/message';
 import { config } from '../../utils/router';
 
 export const options = config({
+  roles: ['user'],
   schema: {
     body: {
       type: 'object',

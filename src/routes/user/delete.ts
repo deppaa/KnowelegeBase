@@ -1,11 +1,14 @@
-import { Handler, PublicationIdGet } from 'src/_generated';
+import { Handler, UserIdDelete } from 'src/_generated';
 import { config } from '../../utils/router';
-import { HTTP_STATUS, ERRORS } from '../../constants/message';
-import { getPublicationById } from '../../integrations/db/storage/publication';
+import { ERRORS, HTTP_STATUS } from '../../constants/message';
 import { checkValidStringToNumber } from '../../utils/validation';
+import {
+  deleteUserById,
+  getUserById,
+} from '../../integrations/db/storage/user';
 
 export const options = config({
-  roles: ['guest', 'user'],
+  roles: ['user'],
   schema: {
     params: {
       type: 'object',
@@ -20,15 +23,6 @@ export const options = config({
         type: 'object',
         properties: {
           id: { type: 'number' },
-          title: { type: 'string' },
-          description: { type: 'string' },
-          status: { type: 'string', enum: ['public', 'private'] },
-          tagids: {
-            type: 'array',
-            items: {
-              type: 'number',
-            },
-          },
         },
         additionalProperties: false,
       },
@@ -50,22 +44,24 @@ export const options = config({
   },
 });
 
-export const handler: Handler<PublicationIdGet> = async (request, reply) => {
+export const handler: Handler<UserIdDelete> = async (request, reply) => {
   const { id } = request.params;
 
   if (!checkValidStringToNumber(id)) {
     return reply
       .code(HTTP_STATUS.BAD_REQUEST)
-      .send({ error: ERRORS.PUBLICATION_ID_IS_NOT_CORRECT });
+      .send({ error: ERRORS.USER_ID_IS_NOT_CORRECT });
   }
 
-  const publication = await getPublicationById(Number(id));
+  const user = await getUserById(Number(id));
 
-  if (!publication) {
+  if (!user) {
     return reply
       .code(HTTP_STATUS.NOT_FOUND)
-      .send({ error: ERRORS.PUBLICATION_NOT_FOUND });
+      .send({ error: ERRORS.USER_NOT_EXIST });
   }
 
-  return reply.code(HTTP_STATUS.OK).send(publication);
+  const result = await deleteUserById(Number(id));
+
+  return reply.code(HTTP_STATUS.OK).send({ id: result });
 };

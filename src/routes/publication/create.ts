@@ -6,6 +6,7 @@ import { getListTags } from '../../integrations/db/storage/tags';
 import { createPublicationTeg } from '../../integrations/db/storage/publicationTeg';
 
 export const options = config({
+  roles: ['user'],
   schema: {
     body: {
       type: 'object',

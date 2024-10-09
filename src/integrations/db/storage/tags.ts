@@ -1,7 +1,7 @@
 import { db } from '../connection';
 import { Tags } from './types';
 
-const COLUMNS = ['title'];
+const COLUMNS = ['title'].join(', ');
 
 export const getTagsById = async (
   id: Tags['id'],

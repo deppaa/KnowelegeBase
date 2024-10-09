@@ -1,5 +1,8 @@
+/* eslint-disable indent */
 import { FastifyInstance, HTTPMethods, RouteShorthandOptions } from 'fastify';
 import { Handler } from '../_generated';
+import { HTTP_STATUS } from '../constants/message';
+import { isAuthenticate } from '../middlewares/auth';
 
 type Routes = Record<
   string,
@@ -11,6 +14,8 @@ type Routes = Record<
     >
   >
 >;
+
+export type Roles = 'guest' | 'user';
 
 export const router = (routes: Routes) => (fastify: FastifyInstance) =>
   fastify.register(async (fastify) => {
@@ -29,11 +34,40 @@ export const router = (routes: Routes) => (fastify: FastifyInstance) =>
   });
 
 export const config = ({
+  roles,
   preHandler = [],
   schema,
-}: RouteShorthandOptions): RouteShorthandOptions => {
+}: RouteShorthandOptions & {
+  roles: Roles[];
+}): RouteShorthandOptions => {
+  const authOnly = roles.includes('guest');
+
+  const unauthorized = {
+    [HTTP_STATUS.UNAUTHORIZED]: {
+      type: 'object',
+      properties: {
+        error: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+  };
+
+  const response =
+    schema?.response || authOnly
+      ? {
+          ...(schema?.response ?? {}),
+          ...(authOnly ? unauthorized : {}),
+        }
+      : undefined;
+
   return {
-    schema,
-    preHandler,
+    schema: {
+      ...schema,
+      ...(response ? { response } : undefined),
+    },
+    preHandler: [
+      isAuthenticate(roles),
+      ...(Array.isArray(preHandler) ? preHandler : [preHandler]),
+    ],
   };
 };

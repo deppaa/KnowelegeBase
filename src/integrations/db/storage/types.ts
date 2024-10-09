@@ -16,3 +16,10 @@ export type PublicationTag = {
   publication_id: Publication['id'];
   tag_id: Tags['id'];
 };
+
+export type Accaunt = {
+  id: number;
+  login: string;
+  password: string;
+  role: 'user';
+};

@@ -3,6 +3,7 @@ import { config } from '../../utils/router';
 import { HTTP_STATUS } from '../../constants/message';
 
 export const options = config({
+  roles: ['user'],
   schema: {
     params: {
       type: 'object',

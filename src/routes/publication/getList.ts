@@ -1,10 +1,19 @@
 import { Handler, PublicationGet } from 'src/_generated';
 import { config } from '../../utils/router';
-import { HTTP_STATUS } from '../../constants/message';
+import { ERRORS, HTTP_STATUS } from '../../constants/message';
 import { getListPublication } from '../../integrations/db/storage/publication';
+import { checkValidStringToNumber } from '../../utils/validation';
 
 export const options = config({
+  roles: ['guest', 'user'],
   schema: {
+    querystring: {
+      type: 'object',
+      properties: {
+        tagIds: { type: 'array', items: { type: 'string' } },
+      },
+      additionalProperties: false,
+    },
     response: {
       [HTTP_STATUS.OK]: {
         type: 'array',
@@ -24,13 +33,31 @@ export const options = config({
           },
           additionalProperties: false,
         },
+        [HTTP_STATUS.BAD_REQUEST]: {
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+          },
+          additionalProperties: false,
+        },
       },
     },
   },
 });
 
 export const handler: Handler<PublicationGet> = async (request, reply) => {
-  const publications = await getListPublication();
+  const { tagIds } = request.query;
+
+  if (tagIds?.length && !checkValidStringToNumber(tagIds)) {
+    return reply
+      .code(HTTP_STATUS.BAD_REQUEST)
+      .send({ error: ERRORS.TAG_ID_IS_NOT_CORRECT });
+  }
+
+  const publications = await getListPublication(
+    tagIds?.length ? tagIds?.map((id) => Number(id)) : [],
+    !request.user ? 'public' : undefined,
+  );
 
   return reply.code(HTTP_STATUS.OK).send(publications);
 };
