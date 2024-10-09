@@ -27,7 +27,9 @@ echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
 ### WSL:
 
 1. Set PUBLIC_ENV to local
-2. Run backend `yarn run watch`
+2. Set JWT_SECRET to secret
+3. Set PASSWORD_SALT to salt
+4. Run backend `yarn run watch`
 
 ### `yarn run lint`
 
