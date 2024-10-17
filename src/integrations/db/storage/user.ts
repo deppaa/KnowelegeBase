@@ -1,40 +1,42 @@
-import { db } from '../connection';
-import { Accaunt } from './types';
-
-const COLUMNS = ['login', 'password', 'role'].join(', ');
+import { Accaunt } from '@prisma/client';
+import { prisma } from '../connection';
 
 export const getUserByLogin = async (
   login: Accaunt['login'],
-): Promise<Accaunt | undefined> => {
-  const { rows } = await db.query<Accaunt>({
-    text: `SELECT id, ${COLUMNS} FROM accaunt WHERE login = $1`,
-    values: [login],
+): Promise<Accaunt | null> => {
+  const rows = await prisma.accaunt.findFirst({
+    where: {
+      login,
+    },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const getUserById = async (
   id: Accaunt['id'],
-): Promise<Accaunt | undefined> => {
-  const { rows } = await db.query<Accaunt>({
-    text: `SELECT id, ${COLUMNS} FROM accaunt WHERE id = $1`,
-    values: [id],
+): Promise<Accaunt | null> => {
+  const rows = await prisma.accaunt.findFirst({
+    where: {
+      id,
+    },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const getUserByLoginAndPassword = async ({
   login,
   password,
-}: Pick<Accaunt, 'login' | 'password'>): Promise<Accaunt | undefined> => {
-  const { rows } = await db.query<Accaunt>({
-    text: `SELECT id, ${COLUMNS} FROM accaunt WHERE login = $1 AND password = $2`,
-    values: [login, password],
+}: Pick<Accaunt, 'login' | 'password'>): Promise<Accaunt | null> => {
+  const rows = await prisma.accaunt.findFirst({
+    where: {
+      login,
+      password,
+    },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const createUser = async ({
@@ -42,27 +44,21 @@ export const createUser = async ({
   password,
   role,
 }: Omit<Accaunt, 'id'>): Promise<Accaunt> => {
-  const { rows } = await db.query<Accaunt>({
-    text: `
-        INSERT INTO accaunt (${COLUMNS}) 
-        VALUES ($1, $2, $3)
-        RETURNING *`,
-    values: [login, password, role],
+  const rows = await prisma.accaunt.create({
+    data: { login, password, role },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const deleteUserById = async (
   id: Accaunt['id'],
 ): Promise<Accaunt['id']> => {
-  const { rows } = await db.query<Accaunt>({
-    text: `
-        DELETE FROM accaunt 
-        WHERE id = $1 
-        RETURNING *`,
-    values: [id],
+  const rows = await prisma.accaunt.delete({
+    where: {
+      id,
+    },
   });
 
-  return rows[0].id;
+  return rows.id;
 };

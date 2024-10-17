@@ -8,8 +8,8 @@
     "lint": "eslint \"**/*.ts\"",
     "db:init": "initdb -D ${CLUSTER_NAME:-pg} -E UTF8 --locale=en_US.UTF-8",
     "db:start": "postgres -D ${CLUSTER_NAME:-pg} -p 5300",
-    "db:create": "node-pg-migrate create",
-    "db:up": "node ./migrate.js"
+    "prisma:migrate-dev": "prisma migrate dev --name",
+    "prisma:generate": "prisma generate"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
@@ -26,12 +26,13 @@
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
     "@fastify/jwt": "^8.0.1",
+    "@prisma/client": "^5.21.0",
     "@types/pg": "^8.11.10",
     "dotenv-flow": "^4.1.0",
     "fastify": "^4.26.2",
     "fastify-extract-definitions": "^3.1.0",
-    "node-pg-migrate": "^7.7.0",
-    "pg": "^8.13.0"
+    "fastify-plugin": "^5.0.1",
+    "prisma": "^5.21.0"
   },
   "main": "./src"
 }
