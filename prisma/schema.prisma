@@ -7,7 +7,7 @@ generator client {
     provider = "prisma-client-js"
 }
 
-model Accaunt {
+model User {
     id       Int       @id @default(autoincrement())
     login    String    @unique
     password String

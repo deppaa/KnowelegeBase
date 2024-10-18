@@ -4,7 +4,6 @@
     "module": "commonjs", // или "ESNext"
     "moduleResolution": "node",
     "outDir": "./build", // выходная директория для скомпилированных файлов
-    "rootDir": "./src", // корневая директория исходных файлов
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

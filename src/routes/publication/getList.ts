@@ -54,10 +54,10 @@ export const handler: Handler<PublicationGet> = async (request, reply) => {
       .send({ error: ERRORS.TAG_ID_IS_NOT_CORRECT });
   }
 
-  const publications = await getListPublication(
-    tagIds?.length ? tagIds?.map((id) => Number(id)) : [],
-    !request.user ? 'public' : undefined,
-  );
+  const publications = await getListPublication({
+    tagIds: tagIds?.length ? tagIds?.map((id) => Number(id)) : [],
+    status: !request.user ? 'public' : undefined,
+  });
 
   return reply.code(HTTP_STATUS.OK).send(publications);
 };

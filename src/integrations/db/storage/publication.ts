@@ -3,7 +3,7 @@ import { prisma } from '../connection';
 
 export const getPublicationById = async (
   id: Publication['id'],
-): Promise<(Publication & { tagids: Tags['id'][] | undefined }) | null> => {
+): Promise<(Publication & { tagIds: Tags['id'][] | undefined }) | null> => {
   const rows = await prisma.publication.findUnique({
     where: {
       id,
@@ -22,27 +22,37 @@ export const getPublicationById = async (
   });
 
   const result = {
-    ...rows!,
-    tagids: rows?.Publication_tag.map((tag) => tag.id),
+    id: rows!.id,
+    title: rows!.title,
+    description: rows!.description,
+    status: rows!.status,
+    tagIds: rows?.Publication_tag.map((tag) => tag.id),
   };
 
   return result;
 };
 
-export const getListPublication = async (
-  tags?: Tags['id'][],
-  status?: Publication['status'],
-): Promise<(Publication & { tagId: Tags['id'][] | undefined })[]> => {
+export const getListPublication = async ({
+  tagIds,
+  status,
+}: {
+  tagIds?: Tags['id'][];
+  status?: Publication['status'];
+}): Promise<(Publication & { tagIds: Tags['id'][] | undefined })[]> => {
   const rows = await prisma.publication.findMany({
     where: {
-      status,
-      Publication_tag: {
-        some: {
-          id: {
-            in: tags,
+      ...(status && {
+        status,
+      }),
+      ...(tagIds && {
+        Publication_tag: {
+          some: {
+            tag_id: {
+              in: tagIds,
+            },
           },
         },
-      },
+      }),
     },
     select: {
       id: true,
@@ -51,15 +61,18 @@ export const getListPublication = async (
       status: true,
       Publication_tag: {
         select: {
-          id: true,
+          tag_id: true,
         },
       },
     },
   });
 
   const result = rows.map((publication) => ({
-    ...publication,
-    tagId: publication.Publication_tag.map((tag) => tag.id),
+    id: publication.id,
+    title: publication.title,
+    description: publication.description,
+    status: publication.status,
+    tagIds: publication.Publication_tag.map((tag) => tag.tag_id),
   }));
 
   return result;

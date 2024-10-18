@@ -1,10 +1,10 @@
-import { Accaunt } from '@prisma/client';
+import { User } from '@prisma/client';
 import { prisma } from '../connection';
 
 export const getUserByLogin = async (
-  login: Accaunt['login'],
-): Promise<Accaunt | null> => {
-  const rows = await prisma.accaunt.findFirst({
+  login: User['login'],
+): Promise<User | null> => {
+  const rows = await prisma.user.findFirst({
     where: {
       login,
     },
@@ -13,10 +13,8 @@ export const getUserByLogin = async (
   return rows;
 };
 
-export const getUserById = async (
-  id: Accaunt['id'],
-): Promise<Accaunt | null> => {
-  const rows = await prisma.accaunt.findFirst({
+export const getUserById = async (id: User['id']): Promise<User | null> => {
+  const rows = await prisma.user.findFirst({
     where: {
       id,
     },
@@ -28,8 +26,8 @@ export const getUserById = async (
 export const getUserByLoginAndPassword = async ({
   login,
   password,
-}: Pick<Accaunt, 'login' | 'password'>): Promise<Accaunt | null> => {
-  const rows = await prisma.accaunt.findFirst({
+}: Pick<User, 'login' | 'password'>): Promise<User | null> => {
+  const rows = await prisma.user.findFirst({
     where: {
       login,
       password,
@@ -43,18 +41,16 @@ export const createUser = async ({
   login,
   password,
   role,
-}: Omit<Accaunt, 'id'>): Promise<Accaunt> => {
-  const rows = await prisma.accaunt.create({
+}: Omit<User, 'id'>): Promise<User> => {
+  const rows = await prisma.user.create({
     data: { login, password, role },
   });
 
   return rows;
 };
 
-export const deleteUserById = async (
-  id: Accaunt['id'],
-): Promise<Accaunt['id']> => {
-  const rows = await prisma.accaunt.delete({
+export const deleteUserById = async (id: User['id']): Promise<User['id']> => {
+  const rows = await prisma.user.delete({
     where: {
       id,
     },
