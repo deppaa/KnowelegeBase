@@ -17,7 +17,7 @@ afterEach(afterEachTest);
 afterAll(afterTests);
 
 const testData: Omit<User, 'id'> = {
-  login: 'test',
+  email: 'test',
   password: 'test',
   role: 'user',
 };
@@ -35,7 +35,7 @@ describe('user', () => {
   test('getUserByLogin works correctly', async () => {
     const user = await createUser(testData);
 
-    const result = await getUserByLogin(user.login);
+    const result = await getUserByLogin(user.email);
 
     expect(result).toEqual({
       ...user,
@@ -47,7 +47,7 @@ describe('user', () => {
     const user = await createUser(testData);
 
     const result = await getUserByLoginAndPassword({
-      login: user.login,
+      email: user.email,
       password: user.password,
     });
 

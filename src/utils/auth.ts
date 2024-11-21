@@ -6,3 +6,6 @@ export const createHash = (password: string): string => {
 
   return key.toString('hex');
 };
+
+export const verifyPassword = (password: string, hash: string): boolean =>
+  createHash(password) === hash;

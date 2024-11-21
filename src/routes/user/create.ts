@@ -9,9 +9,9 @@ export const options = config({
   schema: {
     body: {
       type: 'object',
-      required: ['login', 'password'],
+      required: ['email', 'password'],
       properties: {
-        login: { type: 'string' },
+        email: { type: 'string' },
         password: { type: 'string' },
       },
       additionalProperties: false,
@@ -20,7 +20,7 @@ export const options = config({
       [HTTP_STATUS.CREATE]: {
         type: 'object',
         properties: {
-          login: { type: 'string' },
+          email: { type: 'string' },
         },
         additionalProperties: false,
       },
@@ -36,9 +36,9 @@ export const options = config({
 });
 
 export const handler: Handler<RegistrationPost> = async (request, reply) => {
-  const { login, password } = request.body;
+  const { email, password } = request.body;
 
-  const user = await getUserByLogin(login);
+  const user = await getUserByLogin(email);
 
   if (user) {
     return reply
@@ -49,10 +49,10 @@ export const handler: Handler<RegistrationPost> = async (request, reply) => {
   const hash = createHash(password);
 
   const result = await createUser({
-    login,
+    email,
     password: hash,
     role: 'user',
   });
 
-  return reply.code(HTTP_STATUS.CREATE).send({ login: result.login });
+  return reply.code(HTTP_STATUS.CREATE).send({ email: result.email });
 };

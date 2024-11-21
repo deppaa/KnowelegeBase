@@ -2,11 +2,11 @@ import { User } from '@prisma/client';
 import { prisma } from '../connection';
 
 export const getUserByLogin = async (
-  login: User['login'],
+  email: User['email'],
 ): Promise<User | null> => {
   const rows = await prisma.user.findFirst({
     where: {
-      login,
+      email,
     },
   });
 
@@ -24,12 +24,12 @@ export const getUserById = async (id: User['id']): Promise<User | null> => {
 };
 
 export const getUserByLoginAndPassword = async ({
-  login,
+  email,
   password,
-}: Pick<User, 'login' | 'password'>): Promise<User | null> => {
+}: Pick<User, 'email' | 'password'>): Promise<User | null> => {
   const rows = await prisma.user.findFirst({
     where: {
-      login,
+      email,
       password,
     },
   });
@@ -38,12 +38,12 @@ export const getUserByLoginAndPassword = async ({
 };
 
 export const createUser = async ({
-  login,
+  email,
   password,
   role,
 }: Omit<User, 'id'>): Promise<User> => {
   const rows = await prisma.user.create({
-    data: { login, password, role },
+    data: { email, password, role },
   });
 
   return rows;

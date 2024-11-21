@@ -3,19 +3,13 @@ import { JWT_SECRET } from '../constants/env';
 
 declare module '@fastify/jwt' {
   interface FastifyJWT {
-    payload: { login: string };
-    user: {
-      id: number;
-      login: string;
-      role: string;
-    };
+    id: number;
   }
 }
 
 export const jwtConfig: FastifyJWTOptions = {
   secret: JWT_SECRET,
-  cookie: {
-    cookieName: 'token',
-    signed: false,
-  },
+  decoratorName: 'JWTUser',
+  sign: { algorithm: 'HS256' },
+  verify: { algorithms: ['HS256'] },
 };
