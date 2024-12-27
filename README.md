@@ -1,3 +1,7 @@
+## Info
+
+There are two branches in this project, the main branch uses classic sql queries and does not use tests, and the prisma branch, which uses prisma ORM to access the database and is covered with tests
+
 ## Warning
 
 This project has been tested only in wsl
