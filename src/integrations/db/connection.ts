@@ -1,9 +1,12 @@
-import { Pool } from 'pg';
+import { PrismaClient } from '@prisma/client';
 
-import { DB_CONNECTION } from '../../constants/env';
+export const prisma = new PrismaClient();
 
-export const db = new Pool({ connectionString: DB_CONNECTION });
-
-export const disconnect = async () => {
-  await db.end();
+export const backup = async () => {
+  await prisma.$transaction([
+    prisma.user.deleteMany(),
+    prisma.publication_tag.deleteMany(),
+    prisma.publication.deleteMany(),
+    prisma.tags.deleteMany(),
+  ]);
 };

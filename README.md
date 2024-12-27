@@ -1,7 +1,3 @@
-## Info
-
-There are two branches in this project, the main branch uses classic sql queries and does not use tests, and the prisma branch, which uses prisma ORM to access the database and is covered with tests
-
 ## Warning
 
 This project has been tested only in wsl
@@ -22,7 +18,7 @@ echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
 4. Initialize the database: `yarn run db:init`
 5. Change permissions: `sudo chmod -R 777 /var/run/postgresql/`
 6. Start the database `yarn run db:start`
-7. Run migration `yarn run db:up`
+7. Run migration `yarn run prisma:migrate-dev`
 
 ## Backend
 
@@ -39,17 +35,17 @@ echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
 
 Run eslint.
 
-### `yarn run db:up`
+### `yarn run prisma:migrate-dev`
 
 Run migrations.
+
+### `yarn run prisma:generate`
+
+Create types by prisma shema.
 
 ### `yarn run db:start`
 
 Run database.
-
-### `yarn run db:create {name}`
-
-Create migration file.
 
 ### `yarn run watch`
 

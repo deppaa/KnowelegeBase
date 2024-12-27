@@ -6,13 +6,13 @@ import {
   updatePublicationById,
 } from '../../integrations/db/storage/publication';
 import { checkValidStringToNumber } from '../../utils/validation';
-import { Publication, Tags } from '../../integrations/db/storage/types';
 import { getListTags } from '../../integrations/db/storage/tags';
 import {
   createPublicationTeg,
   deletePublicationTegById,
   getListPublicationTegByPublicationId,
 } from '../../integrations/db/storage/publicationTeg';
+import { Publication, Tags } from '@prisma/client';
 
 export const options = config({
   roles: ['user'],
@@ -142,5 +142,5 @@ export const handler: Handler<PublicationIdPut> = async (request, reply) => {
 
   return reply
     .code(HTTP_STATUS.OK)
-    .send({ ...result, tagids: tagids?.length ? tagids : publication.tagids });
+    .send({ ...result, tagids: tagids?.length ? tagids : publication.tagIds });
 };

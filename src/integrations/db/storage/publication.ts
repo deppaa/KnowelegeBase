@@ -1,72 +1,81 @@
-import { db } from '../connection';
-import { Publication, Tags } from './types';
-
-const COLUMNS = ['title', 'description', 'status'].join(', ');
+import { Publication, Tags } from '@prisma/client';
+import { prisma } from '../connection';
 
 export const getPublicationById = async (
   id: Publication['id'],
-): Promise<Publication | undefined> => {
-  const { rows } = await db.query<Publication>({
-    text: `
-        SELECT 
-            p.id AS id,
-            p.title AS title,
-            p.description AS description,
-            p.status AS status,
-            ARRAY_AGG(t.id) AS tagids
-        FROM 
-            publication p
-        LEFT JOIN 
-            publication_tag pt ON p.id = pt.publication_id
-        LEFT JOIN 
-            tags t ON pt.tag_id = t.id
-        WHERE p.id = $1
-        GROUP BY 
-            p.id, p.title, p.description, p.status`,
-    values: [id],
+): Promise<(Publication & { tagIds: Tags['id'][] | undefined }) | null> => {
+  const rows = await prisma.publication.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      Publication_tag: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 
-  return rows[0];
+  const result = {
+    id: rows!.id,
+    title: rows!.title,
+    description: rows!.description,
+    status: rows!.status,
+    tagIds: rows?.Publication_tag.map((tag) => tag.id),
+  };
+
+  return result;
 };
 
-export const getListPublication = async (
-  tags?: Tags['id'][],
-  status?: Publication['status'],
-): Promise<Publication[]> => {
-  const search = [];
-
-  if (tags?.length) {
-    search.push(`pt.tag_id IN (${tags.join(', ')})`);
-  }
-
-  if (status) {
-    search.push(`p.status = '${status}'`);
-  }
-
-  const queryCondition =
-    search.length > 0 ? `WHERE ${search.join(' AND ')}` : '';
-
-  const { rows } = await db.query<Publication>({
-    text: `
-        SELECT 
-            p.id AS id,
-            p.title AS title,
-            p.description AS description,
-            p.status AS status,
-            ARRAY_AGG(t.id) AS tagids
-        FROM 
-            publication p
-        LEFT JOIN 
-            publication_tag pt ON p.id = pt.publication_id
-        LEFT JOIN 
-            tags t ON pt.tag_id = t.id
-        ${queryCondition}
-        GROUP BY 
-            p.id, p.title, p.description, p.status`,
-    values: [],
+export const getListPublication = async ({
+  tagIds,
+  status,
+}: {
+  tagIds?: Tags['id'][];
+  status?: Publication['status'];
+}): Promise<(Publication & { tagIds: Tags['id'][] | undefined })[]> => {
+  const rows = await prisma.publication.findMany({
+    where: {
+      ...(status && {
+        status,
+      }),
+      ...(tagIds && {
+        Publication_tag: {
+          some: {
+            tag_id: {
+              in: tagIds,
+            },
+          },
+        },
+      }),
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      Publication_tag: {
+        select: {
+          tag_id: true,
+        },
+      },
+    },
   });
 
-  return rows;
+  const result = rows.map((publication) => ({
+    id: publication.id,
+    title: publication.title,
+    description: publication.description,
+    status: publication.status,
+    tagIds: publication.Publication_tag.map((tag) => tag.tag_id),
+  }));
+
+  return result;
 };
 
 export const updatePublicationById = async ({
@@ -74,45 +83,45 @@ export const updatePublicationById = async ({
   title,
   description,
   status,
-}: Omit<Publication, 'tagids'>): Promise<Publication> => {
-  const { rows } = await db.query<Publication>({
-    text: `
-        UPDATE publication
-        SET title = $2, description = $3, status = $4
-        WHERE id = $1
-        RETURNING *`,
-    values: [id, title, description, status],
+}: Publication): Promise<Publication> => {
+  const rows = await prisma.publication.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+      description,
+      status,
+    },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const createPublication = async ({
   title,
   description,
   status,
-}: Omit<Publication, 'id' | 'tagids'>): Promise<Publication> => {
-  const { rows } = await db.query<Publication>({
-    text: `
-        INSERT INTO publication (${COLUMNS}) 
-        VALUES ($1, $2, $3)
-        RETURNING *`,
-    values: [title, description, status],
+}: Omit<Publication, 'id'>): Promise<Publication> => {
+  const rows = await prisma.publication.create({
+    data: {
+      title,
+      description,
+      status,
+    },
   });
 
-  return rows[0];
+  return rows;
 };
 
 export const deletePublicationById = async (
   id: Publication['id'],
 ): Promise<Publication['id']> => {
-  const { rows } = await db.query<Publication>({
-    text: `
-        DELETE FROM publication 
-        WHERE id = $1 
-        RETURNING *`,
-    values: [id],
+  const rows = await prisma.publication.delete({
+    where: {
+      id,
+    },
   });
 
-  return rows[0].id;
+  return rows.id;
 };

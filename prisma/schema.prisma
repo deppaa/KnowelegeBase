@@ -1,0 +1,46 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DB_CONNECTION")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id       Int       @id @default(autoincrement())
+    email    String    @unique
+    password String
+    role     Enum_role @default(user)
+}
+
+model Publication {
+    id              Int               @id @default(autoincrement())
+    title           String
+    description     String
+    status          Enum_status
+    Publication_tag Publication_tag[]
+}
+
+model Tags {
+    id              Int               @id @default(autoincrement())
+    title           String
+    Publication_tag Publication_tag[]
+}
+
+model Publication_tag {
+    id             Int         @id @default(autoincrement())
+    publication    Publication @relation(fields: [publication_id], references: [id])
+    publication_id Int
+    tags           Tags        @relation(fields: [tag_id], references: [id])
+    tag_id         Int
+}
+
+enum Enum_role {
+    user
+}
+
+enum Enum_status {
+    public
+    private
+}

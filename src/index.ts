@@ -1,7 +1,10 @@
 import './plugins/env';
 import { app } from './app';
+import { authWithJwt } from './middlewares/auth';
 
 const fastify = app();
+
+fastify.addHook('preHandler', authWithJwt);
 
 fastify.listen({ host: 'localhost', port: 8000 }, async (error, address) => {
   if (error) {
@@ -9,5 +12,5 @@ fastify.listen({ host: 'localhost', port: 8000 }, async (error, address) => {
     process.exit(1);
   }
 
-  console.log(`🚀 Server ready at: ${address}`);
+  console.log(`⚡ Server ready at: ${address}`);
 });

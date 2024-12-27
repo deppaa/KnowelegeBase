@@ -2,7 +2,7 @@
 import { FastifyInstance, HTTPMethods, RouteShorthandOptions } from 'fastify';
 import { Handler } from '../_generated';
 import { HTTP_STATUS } from '../constants/message';
-import { isAuthenticate } from '../middlewares/auth';
+import { roles as rolesMiddleware } from '../middlewares/auth';
 
 type Routes = Record<
   string,
@@ -66,7 +66,7 @@ export const config = ({
       ...(response ? { response } : undefined),
     },
     preHandler: [
-      isAuthenticate(roles),
+      rolesMiddleware(roles),
       ...(Array.isArray(preHandler) ? preHandler : [preHandler]),
     ],
   };

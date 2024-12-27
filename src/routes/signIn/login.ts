@@ -1,17 +1,16 @@
 import { Handler, SigninPost } from 'src/_generated';
 import { config } from '../../utils/router';
-import { ERRORS, HTTP_STATUS } from '../../constants/message';
-import { getUserByLoginAndPassword } from '../../integrations/db/storage/user';
-import { createHash } from '../../utils/auth';
+import { HTTP_STATUS } from '../../constants/message';
+import { authWithEmail } from '../../middlewares/auth';
 
 export const options = config({
   roles: ['guest', 'user'],
   schema: {
     body: {
       type: 'object',
-      required: ['login', 'password'],
+      required: ['email', 'password'],
       properties: {
-        login: { type: 'string' },
+        email: { type: 'string' },
         password: { type: 'string' },
       },
       additionalProperties: false,
@@ -20,7 +19,7 @@ export const options = config({
       [HTTP_STATUS.OK]: {
         type: 'object',
         properties: {
-          login: { type: 'string' },
+          token: { type: 'string' },
         },
         additionalProperties: false,
       },
@@ -33,27 +32,13 @@ export const options = config({
       },
     },
   },
+  preHandler: [authWithEmail],
 });
 
 export const handler: Handler<SigninPost> = async (request, reply) => {
-  const { login, password } = request.body;
+  const token = await reply.jwtSign({ id: request.user?.id });
 
-  const hash = createHash(password);
-
-  const user = await getUserByLoginAndPassword({ login, password: hash });
-
-  if (!user) {
-    return reply
-      .code(HTTP_STATUS.BAD_REQUEST)
-      .send({ error: ERRORS.USER_NOT_EXIST });
-  }
-
-  const token = await reply.jwtSign({
-    login,
+  return reply.code(HTTP_STATUS.OK).send({
+    token,
   });
-
-  return reply
-    .setCookie('token', token)
-    .code(HTTP_STATUS.OK)
-    .send({ login: user.login });
 };

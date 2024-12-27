@@ -285,12 +285,12 @@ export interface RegistrationPost {
 }
 
 export interface RegistrationPostBody {
-  login: string;
+  email: string;
   password: string;
 }
 
 export interface RegistrationPostReplyStatus201 {
-  login?: string;
+  email?: string;
 }
 
 export interface RegistrationPostReplyStatus400 {
@@ -307,12 +307,12 @@ export interface SigninPost {
 }
 
 export interface SigninPostBody {
-  login: string;
+  email: string;
   password: string;
 }
 
 export interface SigninPostReplyStatus200 {
-  login?: string;
+  token?: string;
 }
 
 export interface SigninPostReplyStatus400 {
