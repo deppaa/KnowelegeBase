@@ -50,3 +50,7 @@ Run database.
 ### `yarn run watch`
 
 Runs the app
+
+### `yarn run test`
+
+Runs test in app
